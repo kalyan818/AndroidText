@@ -1,0 +1,51 @@
+import glob
+import os
+count=0
+ul=list()
+q=open("output.xml","w+")
+s1=open("string.xml","w+")
+
+numbers1=['zero','one','two','three','four','five','six','seven','eight','nine']
+mylist = [o for o in glob.glob("*.xml")]
+outputlist=[]
+q.write("<resources>\n")
+for po in mylist:
+    if(str(po)!="unknown.xml" and str(po)[0]!="_"):
+        with open(po,"r+") as f:
+            t=open("_"+str(po),"w+")
+            print(str(po))
+            list1 = f.readlines()
+            tyu=[]
+            text=""
+            for m in list1:
+                if 'android:text=' in m:
+                    for hj in range(len(m)):
+                        if(m[hj]=="\""):
+                            tyu.append(hj)
+                    text=m[tyu[0]+1:tyu[1]]
+                    str1=""
+                    for rt in text:
+                        if(rt.isalpha()) == True:
+                            str1 = str1+rt
+                        elif(rt == " "):
+                            str1 = str1+"_"
+                        else:
+                            vb=""
+                            for gh in str(ord(rt)):
+                                vb = vb+numbers1[int(gh)]
+                            str1=str1+str(vb)
+                    if "<string name="+"\""+str1+"\">"+text+"</string>\n" not in outputlist:
+                        outputlist.append("<string name="+"\""+str1+"\">"+text+"</string>\n")
+                        q.write("<string name="+"\""+str1+"\">"+text+"</string>\n")
+                    start=m.index("a")
+                    if len(m)-1==tyu[1]+1:
+                        t.write(start*" "+"android:text="+"\""+"@string/"+str1+"\""+"\n")
+                    else:
+                        t.write(start*" "+"android:text="+"\""+"@string/"+str1+"\""+m[tyu[1]+1:]+"\n")
+                else:
+                    t.write(str(m))
+                tyu.clear()
+q.write("</resources>")
+
+print(len(q.readlines()))
+
